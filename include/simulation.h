@@ -15,8 +15,8 @@ public:
 	void Draw();
 	void Update();
 	bool isRunning() { return run; }
-	void Reset() { run = false; grid.fillRandom(); }
-	void Clear() { grid.Clear(); }
+	void Reset() { Stop(); grid.fillRandom(); }
+	void Clear() { grid.Clear(); Stop(); }
 
 
 private:
