@@ -1,0 +1,5 @@
+use an unordered map to store every active tile. we iterate through and update each one while doing so we update the neighbours of it too. when we update a tile add it to a temproary hash map and when updating a new tile check to see if it has already been updated.
+
+Keep track of active by removing only when a cell dies and add when a cell lives, e.g from manual or random creation or during the sim
+
+Also we need to change drawing. While updating create a linked list of changed cells (dead to alive and alive to dead). We then iterate through this and draw their positions and new colour
