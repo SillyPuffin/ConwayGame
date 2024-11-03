@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-
+#include <iostream>
 
 class Grid {
 public:
@@ -12,7 +12,14 @@ public:
 	{};
 
 	void Draw();
-	void setValue(int row, int column, int value);
+	bool ValidateCoords(int column, int row);
+	void setValue(int column , int row, int value);
+	int GetCellValue(int column, int row);
+	void fillRandom();
+
+	void Clear() { cells.assign(rows, std::vector<int>(columns, 0)); }
+	int GetRows() { return rows;}
+	int GetColumns() { return columns; }
 
 private:
 	int rows;

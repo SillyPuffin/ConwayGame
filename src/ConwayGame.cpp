@@ -3,6 +3,7 @@
 
 //include my code
 #include "grid.h"
+#include "simulation.h"
 
 int main()
 {
@@ -10,23 +11,77 @@ int main()
 
     const int WINDOW_WIDTH = 750;
     const int WINDOW_HEIGHT = 750;  
-    const int CELLSIZE = 25;
+    const int CELLSIZE = 15;
 
-    int FPS = 12;
+    float FPS = 10.0;
+    float interval = 1.0f / FPS;
+    float Timer = 0;
 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "conway");
-    SetTargetFPS(FPS);
+    
+    Simulation sim{ WINDOW_WIDTH,WINDOW_HEIGHT,CELLSIZE };
+    
 
-    Grid grid = Grid(WINDOW_WIDTH, WINDOW_HEIGHT, CELLSIZE);
-    grid.setValue(2, 1, 1);
+    while (WindowShouldClose() == false) 
+    {
+        //delta time
+        float dt = GetFrameTime();
 
-    while (WindowShouldClose() == false) {
         //event handling
+        if (IsKeyReleased(KEY_ENTER) && sim.isRunning() == false)
+        {
+            sim.Start();
+        }
+        else if (IsKeyReleased(KEY_ENTER) && sim.isRunning() == true)
+        {
+            sim.Stop();
+        }
+
+        if (IsKeyPressed(KEY_R))
+        {
+            sim.Reset();
+        }
+        if (IsKeyPressed(KEY_C))
+        {
+            sim.Clear();
+        }
+
+        //framerate
+        if (IsKeyPressed(KEY_W))
+        {
+            FPS += 8.0f;
+            interval = 1.0f / FPS;
+            std::cout << FPS << "\n";
+        }
+        if (IsKeyPressed(KEY_S))
+        {
+            if (FPS > 10.0f)
+            {
+                FPS -= 8.0f;
+                interval = 1.0f / FPS;
+                std::cout << FPS << "\n";
+            }
+        }
+
+
         //updating state
+        if (Timer >= interval)
+        {
+            sim.Update();
+            Timer = 0;
+        }
+        else 
+        {
+            Timer += dt;
+        }
+        
+
+        //drawing
         BeginDrawing();
         ClearBackground(GREY);
-        //drawing
-        grid.Draw();
+        
+        sim.Draw();
+
         EndDrawing();
     }
 
