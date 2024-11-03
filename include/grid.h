@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 class Grid {
 public:
@@ -17,14 +18,15 @@ public:
 	int GetCellValue(int column, int row);
 	void fillRandom();
 
-	void Clear() { cells.assign(rows, std::vector<int>(columns, 0)); }
+	void Clear();
 	int GetRows() { return rows;}
 	int GetColumns() { return columns; }
+	void showActive();
 
 private:
 	int rows;
 	int columns;
 	int cellsize;
 	std::vector<std::vector<int>> cells;
-
+	std::unordered_map<std::string, int> ActiveCells;
 };

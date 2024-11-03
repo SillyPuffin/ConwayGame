@@ -68,5 +68,4 @@ void Simulation::Update()
 		}
 		grid = tempGrid;
 	}
-	
 }

@@ -9,11 +9,11 @@ int main()
 {
     Color GREY = { 29, 29, 29, 255 };
 
-    const int WINDOW_WIDTH = 1000;
-    const int WINDOW_HEIGHT = 1000;  
-    const int CELLSIZE = 20;
+    const int WINDOW_WIDTH = 750;
+    const int WINDOW_HEIGHT = 750;  
+    const int CELLSIZE = 25;
 
-    float FPS = 10.0;
+    float FPS = 5.0;
     float interval = 1.0f / FPS;
     float Timer = 0;
 
