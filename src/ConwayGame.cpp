@@ -7,16 +7,17 @@
 
 int main()
 {
-    const int WINDOW_WIDTH = 750;
-    const int WINDOW_HEIGHT = 750;  
-    const int CELLSIZE = 25;
+    const int WINDOW_WIDTH = 1200;
+    const int WINDOW_HEIGHT = 660;  
+    const int CELLSIZE = 3;
 
     float FPS = 5.0;
+    int fps = 0;
     float interval = 1.0f / FPS;
     float Timer = 0;
+    bool capped = false;
 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "conway");
-    ClearWindowState(FLAG_VSYNC_HINT);
     
     Simulation sim{ WINDOW_WIDTH,WINDOW_HEIGHT,CELLSIZE };
     RenderTexture2D RenTex = LoadRenderTexture(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -77,24 +78,32 @@ int main()
 
 
         //updating state
-        if (Timer >= interval)
+        if (Timer >= interval && capped)
         {
             sim.Update();
             Timer = 0;
+            fps = (int)(1.0f / dt);
         }
-        else 
+        else if (capped)
         {
             Timer += dt;
+        }
+        else
+        {
+            sim.Update();
+            fps = (int)1.0f / dt;
         }
         
 
         //drawing
         BeginTextureMode(RenTex);
         sim.Draw();
+        
         EndTextureMode();
 
         BeginDrawing();
         DrawTexture(RenTex.texture, 0, 0, WHITE);
+        DrawText(TextFormat("%04i", fps), 10, 10, 20, RED);
         EndDrawing();
     }
     UnloadRenderTexture(RenTex);

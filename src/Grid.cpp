@@ -1,19 +1,16 @@
 #include "grid.h"
 #include <raylib.h>
-#include <format>
 
 
-
-void Grid::Draw(std::list<std::vector<int>> Drawlist)
+void Grid::Draw(IntVecList Drawlist)
 {
-	Color color = Color{ 0,255,0,255 };
+	
 	for (const auto& cell : Drawlist)
 	{
-		
-		DrawRectangle((float)cell[0] * cellsize, (float)cell[1] * cellsize, (float)cellsize-1, (float)cellsize-1, color);
+		Color color = cell[2] ? Color{ 0,255,0,255 } : Color{ 29,29,29,255 };
+		DrawRectangle((float)cell[0] * cellsize, (float)cell[1] * cellsize, (float)cellsize - 1, (float)cellsize - 1, color);
 	}
 }
-
 
 bool Grid::ValidateCoords(int column, int row) {
 	if (row >= 0 && row < rows && column >= 0 && column < columns) {
@@ -26,23 +23,23 @@ void Grid::Clear()
 {
 	ActiveCells = {};
 	cells.assign(rows, std::vector<int>(columns, 0));
-	ShowActive();
+	//ShowActive();
 }
 
 void Grid::setValue(int column, int row, int value)
 {
 	if (ValidateCoords(column,row))
 	{
+		int oldValue = GetCellValue(column, row);
 		cells[row][column] = value;
 		//keeping track of actives
-		std::string coords = std::format("({},{})", column, row);
-		if (value == 1)
+		if (oldValue == 0 && value == 1)
 		{
-			ActiveCells[coords] = std::pair<int, int>{ column,row };
+			ActiveCells.insert({ column, row });
 		}
-		else if (value == 0)
+		else if (oldValue == 1 && value == 0)
 		{
-			ActiveCells.erase(coords);
+			ActiveCells.erase({ column,row });
 		}
 		
 	}
@@ -56,6 +53,7 @@ int Grid::GetCellValue(int column, int row) {
 }
 
 void Grid::fillRandom() {
+	ActiveCells = {};
 	for (int row = 0; row < rows; row++)
 	{
 		for (int column = 0; column < columns; column++)
@@ -65,13 +63,13 @@ void Grid::fillRandom() {
 			setValue(column, row, state);
 		}
 	}
-	ShowActive();
+	//ShowActive();
 }
 
 int Grid::CountLiveNeighbours(int column, int row)
 {
 	int liveNeighbours = 0;
-	std::vector<std::pair<int, int>> neighbourOffsets = {
+	IntPairVec neighbourOffsets = {
 		{0,-1}, //up
 		{0,1}, //down
 		{-1,0}, //left
@@ -90,10 +88,10 @@ int Grid::CountLiveNeighbours(int column, int row)
 	return liveNeighbours;
 }
 
-std::vector<int> Grid::GetStateToChange(int column, int row) {
+IntVec Grid::GetStateToChange(int column, int row) {
 	int liveNeighbours = CountLiveNeighbours(column, row);
 	int cellValue = GetCellValue(column, row);
-	std::vector<int> stateChange = {};
+	IntVec stateChange = {};
 
 	if (cellValue == 1)
 	{
@@ -113,10 +111,10 @@ std::vector<int> Grid::GetStateToChange(int column, int row) {
 	return stateChange;
 }
 
-std::vector<std::pair<int, int>> Grid::GetNeighbourCoords(int column, int row)
+IntPairVec Grid::GetNeighbourCoords(int column, int row)
 {
-	std::vector<std::pair<int, int>> neighbourPos = {};
-	std::vector<std::pair<int, int>> neighbourOffsets = {
+	IntPairVec neighbourPos = {};
+	IntPairVec neighbourOffsets = {
 		{0,-1}, //up
 		{0,1}, //down
 		{-1,0}, //left
@@ -129,42 +127,45 @@ std::vector<std::pair<int, int>> Grid::GetNeighbourCoords(int column, int row)
 
 	for (const auto& offset : neighbourOffsets) {
 		int neighbourRow = (row + offset.second + rows) % rows;
-		int neighbourColumn = (column + offset.first + column) % columns;
-		neighbourPos.push_back(std::pair<int, int>{neighbourColumn, neighbourRow});
+		int neighbourColumn = (column + offset.first + columns) % columns;
+		neighbourPos.push_back({neighbourColumn, neighbourRow});
+		//std::cout << neighbourColumn << ' ' << neighbourRow << column <<  offset.first << columns <<"\n";
 	}
 	return neighbourPos;
 }
 
-std::list<std::vector<int>> Grid::GetCellsToChange() {
-	std::list<std::vector<int>> changeList = {};
+IntVecList Grid::GetCellsToChange() {
+	IntVecList changeList = {};
 	for (const auto& pair : ActiveCells)
 	{
 		//get x and y coords from key string
-		std::pair<int, int>coords = pair.second;
-		int column = coords.first;
-		int row = coords.second;
+		//IntPair coords = pair;
+		int column = pair.first;
+		int row = pair.second;
 
-		std::vector<std::pair<int, int>>cellsToUpdate = GetNeighbourCoords(column, row);
-		cellsToUpdate.push_back(coords);
+		IntPairVec cellsToUpdate = GetNeighbourCoords(column, row);
+		cellsToUpdate.push_back(pair);
+		
 
 		for (const auto& pos : cellsToUpdate)
 		{
-			std::vector<int>cellAndState = GetStateToChange(pos.first, pos.second);
+			IntVec cellAndState = GetStateToChange(pos.first, pos.second);
 			if (!cellAndState.empty())
 			{
 				changeList.push_back(cellAndState);
 			}
 		}
+	
 	}
 	return changeList;
 }
 
-std::list<std::vector<int>> Grid::ReturnActiveList()
+IntVecList Grid::ReturnActiveList(int value)
 {
-	std::list<std::vector<int>> ListedActive;
+	IntVecList ListedActive;
 	for (const auto& pair : ActiveCells)
 	{
-		ListedActive.push_back(std::vector<int>{pair.second.first, pair.second.second, 1});
+		ListedActive.push_back({pair.first,pair.second,value});
 	}
-	return ListedActive;
+	return ListedActive; 
 }

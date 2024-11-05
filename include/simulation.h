@@ -19,14 +19,14 @@ public:
 
 	void Update();
 	bool isRunning() { return run; }
-	void Reset() { Stop(); ChangeList = {}; grid.fillRandom(); }
-	void Clear() { ChangeList = {}; grid.Clear(); Stop(); }
+	void Reset();
+	void Clear();
 
 
 private:
 	Grid grid;
-	std::list<std::vector<int>> ChangeList;
-	std::list<std::vector<int>> Drawlist;
+	IntVecList ChangeList;
+	IntVecList Drawlist;
 	bool started;
 	bool run;
 };
