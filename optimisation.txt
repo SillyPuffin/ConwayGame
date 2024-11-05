@@ -3,3 +3,12 @@ use an unordered map to store every active tile. we iterate through and update e
 Keep track of active by removing only when a cell dies and add when a cell lives, e.g from manual or random creation or during the sim
 
 Also we need to change drawing. While updating create a linked list of changed cells (dead to alive and alive to dead). We then iterate through this and draw their positions and new colour
+
+
+in grid well define an update function for a specific tile and then we will iterate through the actives derive the x and y and the get the neighbour coords, update them all then move onto the next set. The update function will get live neightbours and use conways rules to decide then return a vector of 3 ints for x,y,state this will be all added to a linked list and returned to sim for grid alteractions
+. then return a linked list of all needed to change back to simulation
+
+then iterate through the changed list and update the grid with what to do.
+
+Then in drawing we will use the changed list again and only dray what has changed
+
