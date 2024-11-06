@@ -24,29 +24,20 @@ void Simulation::DrawLines()
 }
 
 void Simulation::Draw() {
-	if (!started)
-	{
-		DrawBacking();
-		started = true;
-	}
-
-	grid.Draw(Drawlist);
+	DrawBacking();
+	set oldActives = grid.ReturnActiveCells();
+	grid.Draw(oldActives);
 	Drawlist = {};
 }
 
 void Simulation::SetCellValue(int column, int row, int value) {
-	int state = grid.GetCellValue(column, row);
 	grid.setValue(column, row, value);
-	if (state != value)
-	{
-		Drawlist.push_back({ column,row,value });
-	}
 	//grid.ShowActive();
 }
 
 void Simulation::Clear()
 {
-	IntVecList oldActives = grid.ReturnActiveList(0);
+	set oldActives = grid.ReturnActiveCells();
 	Drawlist.insert(Drawlist.end(), oldActives.begin(), oldActives.end());
 	grid.Clear();
 }
@@ -54,23 +45,18 @@ void Simulation::Clear()
 void Simulation::Reset()
 {
 	grid.fillRandom();
-	IntVecList newActives = grid.ReturnActiveList(1);
+	set newActives = grid.ReturnActiveCells();
 	Drawlist.insert(Drawlist.end(), newActives.begin(), newActives.end());
 	run = false;
-	started = false;
 }
 
 void Simulation::Update() 
 {
 	if (isRunning())
 	{
-		ChangeList = grid.GetCellsToChange();
-		Drawlist.insert(Drawlist.end(), ChangeList.begin(),ChangeList.end());
+		grid.GetCellsToChange();
 		
-		for (const auto& cell : ChangeList)
-		{
-			grid.setValue(cell[0], cell[1], cell[2]);
-		}
+		
 		//grid.ShowActive();
 
 	}

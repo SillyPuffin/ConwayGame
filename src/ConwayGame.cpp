@@ -9,7 +9,7 @@ int main()
 {
     const int WINDOW_WIDTH = 1200;
     const int WINDOW_HEIGHT = 660;  
-    const int CELLSIZE = 3;
+    const int CELLSIZE = 30;
 
     float FPS = 5.0;
     int fps = 0;
@@ -20,7 +20,7 @@ int main()
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "conway");
     
     Simulation sim{ WINDOW_WIDTH,WINDOW_HEIGHT,CELLSIZE };
-    RenderTexture2D RenTex = LoadRenderTexture(WINDOW_WIDTH, WINDOW_HEIGHT);
+    
     
     while (WindowShouldClose() == false) 
     {
@@ -33,7 +33,6 @@ int main()
             Vector2 mousePos = GetMousePosition();
             int column = mousePos.x / CELLSIZE;
             int row = mousePos.y / CELLSIZE;
-            row = WINDOW_HEIGHT / CELLSIZE - row -1;
             sim.SetCellValue(column, row, 1);
         }
 
@@ -96,16 +95,12 @@ int main()
         
 
         //drawing
-        BeginTextureMode(RenTex);
-        sim.Draw();
         
-        EndTextureMode();
 
         BeginDrawing();
-        DrawTexture(RenTex.texture, 0, 0, WHITE);
+        sim.Draw();
         DrawText(TextFormat("%04i", fps), 10, 10, 20, RED);
         EndDrawing();
     }
-    UnloadRenderTexture(RenTex);
     CloseWindow();
 }

@@ -2,13 +2,12 @@
 #include <raylib.h>
 
 
-void Grid::Draw(IntVecList Drawlist)
+void Grid::Draw(set Drawlist)
 {
-	
+	Color color =  Color{ 0,255,0,255 };
 	for (const auto& cell : Drawlist)
 	{
-		Color color = cell[2] ? Color{ 0,255,0,255 } : Color{ 29,29,29,255 };
-		DrawRectangle((float)cell[0] * cellsize, (float)cell[1] * cellsize, (float)cellsize - 1, (float)cellsize - 1, color);
+		DrawRectangle((float)cell.first * cellsize, (float)cell.second * cellsize, (float)cellsize - 1, (float)cellsize - 1, color);
 	}
 }
 
@@ -88,16 +87,17 @@ int Grid::CountLiveNeighbours(int column, int row)
 	return liveNeighbours;
 }
 
-IntVec Grid::GetStateToChange(int column, int row) {
+void Grid::GetStateToChange(int column, int row) {
 	int liveNeighbours = CountLiveNeighbours(column, row);
 	int cellValue = GetCellValue(column, row);
-	IntVec stateChange = {};
 
 	if (cellValue == 1)
 	{
 		if (liveNeighbours > 3 || liveNeighbours < 2)
 		{
-			stateChange = { column, row, 0 };
+			tempcells[row][column] = 0;
+			ActiveCells.erase({ column,row });
+		
 		}
 		
 	}
@@ -105,10 +105,12 @@ IntVec Grid::GetStateToChange(int column, int row) {
 	{
 		if (liveNeighbours == 3)
 		{
-			stateChange = { column, row, 1 };
+			tempcells[row][column] = 1;
+			ActiveCells.insert({ column, row });
+			
 		}
 	}
-	return stateChange;
+	std::cout << liveNeighbours << ' ' << tempcells[row][column] << '\n';
 }
 
 IntPairVec Grid::GetNeighbourCoords(int column, int row)
@@ -134,8 +136,7 @@ IntPairVec Grid::GetNeighbourCoords(int column, int row)
 	return neighbourPos;
 }
 
-IntVecList Grid::GetCellsToChange() {
-	IntVecList changeList = {};
+void Grid::GetCellsToChange() {
 	for (const auto& pair : ActiveCells)
 	{
 		//get x and y coords from key string
@@ -149,23 +150,15 @@ IntVecList Grid::GetCellsToChange() {
 
 		for (const auto& pos : cellsToUpdate)
 		{
-			IntVec cellAndState = GetStateToChange(pos.first, pos.second);
-			if (!cellAndState.empty())
-			{
-				changeList.push_back(cellAndState);
-			}
+			GetStateToChange(pos.first, pos.second);
 		}
 	
 	}
-	return changeList;
+	cells = tempcells;
+
 }
 
-IntVecList Grid::ReturnActiveList(int value)
+std::unordered_set<IntPair, pair_hash> Grid::ReturnActiveCells()
 {
-	IntVecList ListedActive;
-	for (const auto& pair : ActiveCells)
-	{
-		ListedActive.push_back({pair.first,pair.second,value});
-	}
-	return ListedActive; 
+	return ActiveCells;
 }

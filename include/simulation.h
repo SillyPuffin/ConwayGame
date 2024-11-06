@@ -5,7 +5,7 @@ class Simulation
 {
 public:
 	Simulation(int width, int height, int cellsize)
-		: grid(width, height, cellsize), run(false), ChangeList({}), started(false), Drawlist({})
+		: grid(width, height, cellsize), run(false), Drawlist({})
 	{};
 
 	void Stop() { run = false; }
@@ -25,8 +25,6 @@ public:
 
 private:
 	Grid grid;
-	IntVecList ChangeList;
-	IntVecList Drawlist;
-	bool started;
+	IntPairList Drawlist;
 	bool run;
 };

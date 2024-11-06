@@ -20,6 +20,7 @@ struct pair_hash {
 	}
 };
 
+typedef std::unordered_set < std::pair<int, int>, pair_hash > set;
 
 class Grid {
 public:
@@ -28,10 +29,11 @@ public:
 		columns(width / cellsize),
 		cellsize(cellsize),
 		cells(rows, std::vector<int>(columns, 0)),
+		tempcells(rows, std::vector<int>(columns, 0)),
 		ActiveCells({})
 	{};
 
-	void Draw(IntVecList Drawlist);
+	void Draw(set Drawlist);
 
 	void setValue(int column , int row, int value);
 	void fillRandom();
@@ -46,15 +48,16 @@ public:
 	int GetRows() { return rows; }
 	int GetColumns() { return columns; }
 
-	IntVecList ReturnActiveList(int value);
+	std::unordered_set < std::pair<int, int>, pair_hash > ReturnActiveCells();
 	IntPairVec GetNeighbourCoords(int column, int row);
-	IntVec GetStateToChange(int column, int row);
-	IntVecList GetCellsToChange();
+	void GetStateToChange(int column, int row);
+	void GetCellsToChange();
 
 private:
 	int rows;
 	int columns;
 	int cellsize;
 	std::vector<IntVec> cells;
+	std::vector<IntVec> tempcells;
 	std::unordered_set < std::pair<int,int>, pair_hash > ActiveCells;
 };
