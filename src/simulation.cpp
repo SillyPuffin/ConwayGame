@@ -46,16 +46,21 @@ void Simulation::SetCellValue(int column, int row, int value) {
 
 void Simulation::Clear()
 {
-	IntVecList oldActives = grid.ReturnActiveList(0);
-	Drawlist.insert(Drawlist.end(), oldActives.begin(), oldActives.end());
+	started = false;
+	run = false;
 	grid.Clear();
 }
 
 void Simulation::Reset()
 {
 	grid.fillRandom();
-	IntVecList newActives = grid.ReturnActiveList(1);
-	Drawlist.insert(Drawlist.end(), newActives.begin(), newActives.end());
+	set newActives = grid.ReturnActiveCells();
+	
+	for (const auto& pair : newActives)
+	{
+		Drawlist.push_back({ pair.first, pair.second, 1 });
+	}
+
 	run = false;
 	started = false;
 }

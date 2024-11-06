@@ -5,9 +5,12 @@
 void Grid::Draw(IntVecList Drawlist)
 {
 	
-	for (const auto& cell : Drawlist)
+	for ( auto& cell : Drawlist)
 	{
-		Color color = cell[2] ? Color{ 0,255,0,255 } : Color{ 29,29,29,255 };
+		unsigned int r = (float)cell[0] / columns * 255;
+		unsigned int g = (float)cell[1] / rows * 255;
+		unsigned int b = (float)(r * g) / 65025 * 225;
+		Color color = cell[2] ? Color{ (unsigned char)r,(unsigned char)g,(unsigned char)b,255} : Color{29,29,29,255};
 		DrawRectangle((float)cell[0] * cellsize, (float)cell[1] * cellsize, (float)cellsize - 1, (float)cellsize - 1, color);
 	}
 }
@@ -160,12 +163,7 @@ IntVecList Grid::GetCellsToChange() {
 	return changeList;
 }
 
-IntVecList Grid::ReturnActiveList(int value)
+set Grid::ReturnActiveCells()
 {
-	IntVecList ListedActive;
-	for (const auto& pair : ActiveCells)
-	{
-		ListedActive.push_back({pair.first,pair.second,value});
-	}
-	return ListedActive; 
+	return ActiveCells; 
 }

@@ -20,6 +20,7 @@ struct pair_hash {
 	}
 };
 
+typedef std::unordered_set<IntPair, pair_hash> set;
 
 class Grid {
 public:
@@ -46,7 +47,7 @@ public:
 	int GetRows() { return rows; }
 	int GetColumns() { return columns; }
 
-	IntVecList ReturnActiveList(int value);
+	set ReturnActiveCells();
 	IntPairVec GetNeighbourCoords(int column, int row);
 	IntVec GetStateToChange(int column, int row);
 	IntVecList GetCellsToChange();
@@ -56,5 +57,5 @@ private:
 	int columns;
 	int cellsize;
 	std::vector<IntVec> cells;
-	std::unordered_set < std::pair<int,int>, pair_hash > ActiveCells;
+	set ActiveCells;
 };

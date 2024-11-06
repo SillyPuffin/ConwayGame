@@ -7,9 +7,9 @@
 
 int main()
 {
-    const int WINDOW_WIDTH = 1200;
-    const int WINDOW_HEIGHT = 660;  
-    const int CELLSIZE = 3;
+    const int WINDOW_WIDTH = 1280;
+    const int WINDOW_HEIGHT = 1280;  
+    const int CELLSIZE = 10;
 
     float FPS = 5.0;
     int fps = 0;
@@ -91,7 +91,7 @@ int main()
         else
         {
             sim.Update();
-            fps = (int)1.0f / dt;
+            fps = (int)1 / dt;
         }
         
 
@@ -103,7 +103,7 @@ int main()
 
         BeginDrawing();
         DrawTexture(RenTex.texture, 0, 0, WHITE);
-        DrawText(TextFormat("%04i", fps), 10, 10, 20, RED);
+        DrawText(TextFormat("%04i", fps), 10, 10, 30, WHITE);
         EndDrawing();
     }
     UnloadRenderTexture(RenTex);
