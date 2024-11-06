@@ -9,11 +9,12 @@ int main()
 {
     Color GREY = { 29, 29, 29, 255 };
 
-    const int WINDOW_WIDTH = 1000;
-    const int WINDOW_HEIGHT = 1000;  
-    const int CELLSIZE = 20;
+    const int WINDOW_WIDTH = 1280;
+    const int WINDOW_HEIGHT = 1280;  
+    const int CELLSIZE = 10;
 
     float FPS = 10.0;
+    int fps = 0;
     float interval = 1.0f / FPS;
     float Timer = 0;
 
@@ -77,9 +78,11 @@ int main()
 
 
         //updating state
+        sim.Update();
         if (Timer >= interval)
         {
-            sim.Update();
+            //sim.Update();
+            fps = (int)1 / dt;
             Timer = 0;
         }
         else 
@@ -90,8 +93,9 @@ int main()
 
         //drawing
         BeginDrawing();
-        
+        ClearBackground(GREY);
         sim.Draw();
+        DrawText(TextFormat("%04i", fps), 10, 10, 30, WHITE);
 
         EndDrawing();
     }
